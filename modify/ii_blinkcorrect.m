@@ -28,12 +28,12 @@ if ismember(chan,basevars)
     ii_cfg = evalin('base', 'ii_cfg');
     sel = x*0;
     
-    blink = find(pupil==pval);
+    blink = find(pupil<=pval);
     if blink > 0
         split1 = SplitVec(blink,'consecutive','firstval');
         split2 = SplitVec(blink,'consecutive','lastval');
         
-        if split1-pri < 0
+        if split1-pri < 0;
             blinked(:,1) = 0;
         else
             blinked(:,1) = split1 - pri;
@@ -45,9 +45,14 @@ if ismember(chan,basevars)
             blinked(:,2) = split2 + fol;
         end
         
-        chk = find(blinked(:,2) > lx);
-        if ~isempty(chk)
-            blinked(chk,2) = lx;
+        chk_low = find(blinked(:,1) < 0);
+        if ~isempty(chk_low)
+            blinked(chk_low,1) = 1;
+        end
+        
+        chk_hi = find(blinked(:,2) > lx);
+        if ~isempty(chk_hi)
+            blinked(chk_hi,2) = lx;
         end
                
         for z=1:(size(blinked,1))
