@@ -24,6 +24,8 @@ basevars = evalin('base','who');
 if ismember(chan,basevars)
     pupil = evalin('base',pchan);
     x = evalin('base',chan);
+    xx = x; xx(pupil==0) = NaN; % To improve the mean estimate: replace any data points in channel x to NaN when Pupil==0
+    xmean = nanmean(nonzeros(xx)); % Calculate mean of channel omitting NaNs (i.e. when Pupil==0);
     lx = length(x);
     ii_cfg = evalin('base', 'ii_cfg');
     sel = x*0;
@@ -32,19 +34,10 @@ if ismember(chan,basevars)
     if blink > 0
         split1 = SplitVec(blink,'consecutive','firstval');
         split2 = SplitVec(blink,'consecutive','lastval');
-        
-        if split1-pri < 0;
-            blinked(:,1) = 0;
-        else
-            blinked(:,1) = split1 - pri;
-        end
-        
-        if split2+fol > lx
-            blinked(:,2) = lx;
-        else
-            blinked(:,2) = split2 + fol;
-        end
-        
+
+        blinked(:,1) = split1 - pri;
+        blinked(:,2) = split2 + fol;
+
         chk_low = find(blinked(:,1) < 0);
         if ~isempty(chk_low)
             blinked(chk_low,1) = 1;
@@ -61,7 +54,11 @@ if ismember(chan,basevars)
         
         x(sel==1) = 0;
         
-        for o = 1:(length(x))
+        if x(1) == 0;
+            x(1) = xmean; % if the first data point is a blink, interpolate using the mean of the channel
+        end
+        
+        for o = 2:(length(x))
             if x(o) == 0
                 x(o) = x(o - 1);
             end
