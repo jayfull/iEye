@@ -10,15 +10,6 @@ function ii_resample()
 %
 % /wem 10.30.13
 
-%%%%%%%%%%%%
-% EYE FILE %
-%%%%%%%%%%%%
-% IYE
-
-% LOAD FILE
-[filename, pathname] = uigetfile('*.*', 'Select base EYE MOVEMENT file');
-ifile = fullfile(pathname, filename);
-ii_openiye(ifile);
 
 % FIND SAMPLES BEFORE FIRST FIXATION
 X = evalin('base','X');
@@ -27,6 +18,7 @@ TarX = evalin('base','TarX');
 TarY = evalin('base','TarY');
 XDAT = evalin('base','XDAT');
 Pupil = evalin('base','Pupil');
+ii_cfg = evalin('base','ii_cfg');
 
 sel = X*0;
 cursel(:,1) = 1;
@@ -46,7 +38,7 @@ XDAT(cursel(:,1):cursel(:,2)) = [];
 Pupil(cursel(:,1):cursel(:,2)) = [];
 sel(cursel(:,1):cursel(:,2)) = [];
 
-putvar(X,Y,TarX,TarY,Pupil,XDAT,sel);
+putvar(X,Y,TarX,TarY,Pupil,XDAT);
 ii_selectempty;
 ii_replot;
 
@@ -66,12 +58,8 @@ XDAT(st:en) = [];
 Pupil(st:en) = [];
 sel(st:en) = [];
 
-putvar(X,Y,TarX,TarY,Pupil,XDAT,sel);
+putvar(X,Y,TarX,TarY,Pupil,XDAT);
 ii_replot;
-
-% SAVE CHANGES
-% ii_saveiye;
-
 
 %%%%%%%%%%%%%%
 % REACH FILE %
@@ -157,7 +145,7 @@ Frame(1:ffix) = [];
 Time(1:ffix) = [];
 sel(1:ffix) = [];
 
-putvar(rX,rY,rZ,Frame,Time,sel);
+putvar(rX,rY,rZ,Frame,Time);
 
 %%%%%%%%%%%%
 % RESAMPLE %
@@ -178,7 +166,7 @@ Frame = decimate(Frame,6);
 Time = decimate(Time,6);
 sel = rX*0;
 
-putvar(rX,rY,rZ,Frame,Time,sel,cfg,vis);
+putvar(rX,rY,rZ,Frame,Time);
 % ii_replot;
 
 %%%%%%%%%%%%%%%%%%%
@@ -210,11 +198,16 @@ else
     disp('Size is the same');
 end
 
+ii_cfg.nchan = '11';
+ii_cfg.vis = 'X,Y,TarX,TarY,XDAT,Pupil,Frame,Time,rX,rY,rZ';
+ii_cfg.lchan{1}{7} = 'Frame';
+ii_cfg.lchan{1}{8} = 'Time';
+ii_cfg.lchan{1}{9} = 'rX';
+ii_cfg.lchan{1}{10} = 'rY';
+ii_cfg.lchan{1}{11} = 'rZ';
 
-%%%%%%%%%%%%%%
-% SAVE MERGE %
-%%%%%%%%%%%%%%
+putvar(ii_cfg);
 
-ii_saveiye();
+
 end
 
