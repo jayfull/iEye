@@ -1,4 +1,4 @@
-function ii_import_edf()
+function ii_import_edf_sd(filename,pathname)
 %IMPORT EYELINK EDF FILES
 %   This function will import Eyelink EDF files but requires 'edf2asc'
 %   command (from Eyelink) be installed in MATLAB's path. A config (*.ifg)
@@ -24,13 +24,13 @@ function ii_import_edf()
 
 % SETUP FILE
 
-[filename, pathname] = uigetfile('*.edf', 'Select EDF file');
+% [filename, pathname] = uigetfile('*.edf', 'Select EDF file');
 
 if isequal(filename,0)
     disp('User selected Cancel');
 else
     % GET CONFIG
-    [nchan,lchan,schan,cfg] = ii_openifg();
+    [nchan,lchan,schan,cfg] = ii_openifg_sd('deepu.ifg', '/Volumes/davachilab/murty/CYOM/CYOM.ey/eye_track/iEye-master/');
     nchan = str2num(nchan);
     schan = str2num(schan);
     vis = lchan;
@@ -103,26 +103,12 @@ else
         ci = 1;
         cv = 0;
         M(:,(i+1)) = 0;
-
-        % OLD, 1000 HZ ONLY
-%         for h = 1:length(MV)
-%             ci = find(M(:,1)==MV(h,1));  
-%             M((ci:length(M)),(i+1)) = MV(h,2);
-%             li = ci;
-%         end   
         
         for h = 1:length(MV)
-            ci = find(M(:,1)==MV(h,1));
-            if isempty(ci) == 0
-                M((ci:length(M)),(i+1)) = MV(h,2);
-                li = ci;
-            else
-                MV(h,1) = MV(h,1) - 1;
-                ci = find(M(:,1)==MV(h,1));
-                M((ci:length(M)),(i+1)) = MV(h,2);
-                li = ci;
-            end
-        end
+            ci = find(M(:,1)==MV(h,1));            
+            M((ci:length(M)),(i+1)) = MV(h,2);
+            li = ci;
+        end       
     end
     
      delete(fullfile(pathname,asc_evnt_file));
