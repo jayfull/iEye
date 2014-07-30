@@ -12,7 +12,7 @@ ii_view_channels('X,Y,TarX,TarY,XDAT');
 ii_invert('Y');
 
 % Correct for blinks
-ii_blinkcorrect('X','Pupil',0,11,11);
+ii_blinkcorrect('X','Pupil',0,10,10);
 ii_blinkcorrect('Y','Pupil',0,10,10);
 
 % Smooth data
