@@ -29,6 +29,7 @@ if ismember(chan,basevars)
     lx = length(x);
     ii_cfg = evalin('base', 'ii_cfg');
     sel = x*0;
+    blinkvec = x*0;
     
     blink = find(pupil<=pval);
     if blink > 0
@@ -71,9 +72,12 @@ if ismember(chan,basevars)
 %         ylims = get(gca,'YLim');
 %         hold on
 %         plot([blink blink], ylims, '-r')
+
+        blinkvec(blink) = 1;
         
         assignin('base',chan,x);
         ii_cfg.blink = blink;
+        ii_cfg.blinkvec = blinkvec;
         putvar(ii_cfg);
         ii_replot;
     else
